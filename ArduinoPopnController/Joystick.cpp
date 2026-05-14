@@ -96,8 +96,9 @@ Joystick_::Joystick_()
 	tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
 
 	// LOGICAL_MAXIMUM (255)
-	tempHidReportDescriptor[hidReportDescriptorSize++] = 0x25;
-	tempHidReportDescriptor[hidReportDescriptorSize++] = 0XFF;
+	tempHidReportDescriptor[hidReportDescriptorSize++] = 0x26;
+	tempHidReportDescriptor[hidReportDescriptorSize++] = 0xFF;
+	tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
 
 	// REPORT_SIZE (8)
 	tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
@@ -127,28 +128,39 @@ Joystick_::Joystick_()
 	tempHidReportDescriptor[hidReportDescriptorSize++] = 0xc0;
 			
 //    /*Lights */
-//    0x85, 0x05,                    /*   REPORT_ID 5*/ 
-//    0x15, 0x00,                    /*     LOGICAL_MINIMUM (0) */ 
-//    0x25, 0x01,                    /*     LOGICAL_MAXIMUM (255) */ 
+//+    0x85, 0x05,                    /*   REPORT_ID 5*/ 
+//+    0x15, 0x00,                    /*     LOGICAL_MINIMUM (0) */ 
+//+    0x25, 0x01,                    /*     LOGICAL_MAXIMUM (255) */ 
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0x85;
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
 
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0x15;
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
 
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x25;
+    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x26;
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0xFF;
+    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+/*
+^      HID_REPORT_ID(REPORT_ID_LIGHTS)                                      \
++      HID_REPORT_COUNT(60), HID_REPORT_SIZE(8),                            \
+^      HID_LOGICAL_MIN(0x00), HID_LOGICAL_MAX_N(0x00ff, 2),                 \
++      HID_USAGE_PAGE(HID_USAGE_PAGE_ORDINAL),                              \
+~     HID_STRING_MINIMUM(6), HID_STRING_MAXIMUM(65),                       \
+~     HID_USAGE_MIN(1), HID_USAGE_MAX(255),                                \
++      HID_OUTPUT(HID_DATA | HID_VARIABLE | HID_ABSOLUTE),                  \
+
+*/
 //    /*Led 1 */ 
-//    0x05, 0x0a,                    /*     USAGE_PAGE (Ordinals) */ 
-//    0x09, 0x01,                    /*     USAGE (Instance 1) */ 
-//    0xa1, 0x02,                    /*     COLLECTION (Logical) */ 
-//    0x05, 0x08,                    /*       USAGE_PAGE (LEDs) */ 
-//    0x09, 0x4b,                    /*       USAGE (Generic Indicator 1) */ 
-//    0x79, 0x04,                    /*       STRING INDEX (4) */
-//    0x75, 0x01,                    /*       REPORT_SIZE (8) */ 
-//    0x95, 0x01,                    /*       REPORT_COUNT (1) */ 
-//    0x91, 0x02,                    /*       OUTPUT (Data,Var,Abs) */ 
-//    0xc0,                          /*     END_COLLECTION */ 
+//+    0x05, 0x0a,                    /*     USAGE_PAGE (Ordinals) */ 
+//~   0x09, 0x01,                    /*     USAGE (Instance 1) */ 
+//-    0xa1, 0x02,                    /*     COLLECTION (Logical) */ 
+//-   0x05, 0x08,                    /*       USAGE_PAGE (LEDs) */ 
+//-   0x09, 0x4b,                    /*       USAGE (Generic Indicator 1) */ 
+//~    0x79, 0x04,                    /*       STRING INDEX (4) */
+//+    0x75, 0x01,                    /*       REPORT_SIZE (8) */ 
+//+    0x95, 0x01,                    /*       REPORT_COUNT (1) */ 
+//+   0x91, 0x02,                    /*       OUTPUT (Data,Var,Abs) */ 
+//-    0xc0,                          /*     END_COLLECTION */ 
     for (int index = 0; index < 9; index++) {
       tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
       tempHidReportDescriptor[hidReportDescriptorSize++] = 0x0a;
@@ -205,6 +217,6 @@ void Joystick_::sendState()
 	uint8_t data[4];
 	data[0] = _buttonValues[0];
 	data[1] = _buttonValues[1];
-	data[2] = data[3] = 0;
+	data[2] = data[3] = 0x80;
 	DynamicHID().SendReport(JOYSTICK_REPORT_ID, data, 4);
 }
