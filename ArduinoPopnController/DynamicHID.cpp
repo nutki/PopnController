@@ -199,11 +199,10 @@ bool DynamicHID_::setup(USBSetup& setup)
 			// You can read multiple times through a loop.
 			// The first byte (may!) contain the reportID on a multreport.
 			//USB_RecvControl(data, length);
-      if(setup.wValueH == DYNAMIC_HID_REPORT_TYPE_OUTPUT && setup.wLength == 5){
-        USB_RecvControl(led_data, 5);
-        uint32_t bitfield = *(uint32_t*)&(led_data[1]);
+      if(setup.wValueH == DYNAMIC_HID_REPORT_TYPE_OUTPUT && setup.wLength == 10){
+        USB_RecvControl(led_data, 10);
         for (int i = 0; i < 9; i++) {
-          digitalWrite(i+2, (bitfield>>i)&1);
+			analogWrite(i+2, led_data[i+1]);
         }
         return true;
       }

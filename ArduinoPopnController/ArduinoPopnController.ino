@@ -15,12 +15,7 @@ char numpad[ROWS][COLS] = {
 };
 Keypad kpd = Keypad( makeKeymap(numpad), rowPins, colPins, ROWS, COLS );
 
-Joystick_ Joystick(4/*JOYSTICK_DEFAULT_REPORT_ID*/,JOYSTICK_TYPE_GAMEPAD,
-  9, 0,                  // Button Count, Hat Switch Count
-  true, true, false,     // X and Y, but no Z Axis
-  false, false, false,   // No Rx, Ry, or Rz
-  false, false,          // No rudder or throttle
-  false, false, false);  // No accelerator, brake, or steering
+Joystick_ Joystick;
 
 void setup() {
   // Initialize Button Pins
@@ -31,7 +26,6 @@ void setup() {
   for(int i = 9; i < 18; i++) {
     pinMode(i+2, INPUT_PULLUP);
   }
-  Joystick.begin(false);
 //  Serial.begin(115200);
   Keyboard.begin();
 }
