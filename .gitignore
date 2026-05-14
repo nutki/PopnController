@@ -1,0 +1,32 @@
+﻿# Build directories
+build/
+**/build/
+
+# IDE files
+.vscode/
+*.code-workspace
+
+# Compiled Object files
+*.o
+*.obj
+*.elf
+*.hex
+*.bin
+
+# Dependency files
+*.d
+
+# Archives
+*.a
+*.lib
+
+# Shared objects
+*.so
+*.dll
+
+# Temporary files
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
