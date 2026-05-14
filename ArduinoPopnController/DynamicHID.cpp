@@ -62,7 +62,7 @@ const char* const PROGMEM LEDString_07 = "Button 8";
 const char* const PROGMEM LEDString_08 = "Button 9";
 uint8_t STRING_ID_LED_Count = 9;
 #define STRING_ID_LED_Base 4
-byte led_data[5];
+byte led_data[10];
 
 const char* LEDString_indiv[] = {LEDString_00,LEDString_01,LEDString_02,LEDString_03,LEDString_04,LEDString_05,LEDString_06,LEDString_07,LEDString_08};
 static bool SendControl(uint8_t d)
