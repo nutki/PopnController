@@ -18,6 +18,7 @@ Keypad kpd = Keypad( makeKeymap(numpad), rowPins, colPins, ROWS, COLS );
 Joystick_ Joystick;
 
 void setup() {
+  delay(1000); // Power-up safety delay
   // Initialize Button Pins
   for(int i = 0; i < 9; i++) {
     pinMode(i+2, OUTPUT);
