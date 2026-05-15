@@ -15,6 +15,18 @@ Keypad kpd = Keypad(numpad, rowPins, colPins, 4, 3);
 
 Joystick_ Joystick;
 
+void startupLightshow() {
+  for(int x = -200; x < 1200; x++) {
+    for(int i = 0; i < 9; i++) {
+      int xd = x - i * 100 + 100;
+      if (xd < 0) xd = -xd;
+      if (xd > 255) xd = 255;
+      analogWrite(i+2, 255 - xd);
+    }
+    delay(1);
+  }
+}
+
 void setup() {
   for(int i = 0; i < 9; i++) {
     pinMode(i+11, INPUT_PULLUP);
@@ -22,6 +34,7 @@ void setup() {
     digitalWrite(i+2, 0);
   }
   Keyboard.begin();
+  startupLightshow();
 }
 
 void loop() {
