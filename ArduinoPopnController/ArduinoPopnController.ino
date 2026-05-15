@@ -27,6 +27,7 @@ void startupLightshow() {
   }
 }
 
+static int lightMode = 0;
 void setup() {
   for(int i = 0; i < 9; i++) {
     pinMode(i+11, INPUT_PULLUP);
@@ -35,12 +36,15 @@ void setup() {
   }
   Keyboard.begin();
   startupLightshow();
+  int k = kpd.getKey();
+  if (k == '7') lightMode = 1;
+  else if (k == '8') lightMode = 2;
 }
 
 void loop() {
   for (int index = 0; index < 9; index++) {
     int currentButtonState = !digitalRead(index + 11);
-//  digitalWrite(2+index, !currentButtonState);
+    if (lightMode) digitalWrite(2+index, lightMode == 2 ? currentButtonState : !currentButtonState);
     Joystick.setButton(index, currentButtonState);
   }
   Joystick.sendState();
