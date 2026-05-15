@@ -31,7 +31,7 @@ const uint8_t hidReportDescriptor[] = {
 	0x09, 0x30,                 // USAGE (X)
 	0x09, 0x31,                 // USAGE (Y)
 	0x81, 0x02,                 // INPUT (Data,Var,Abs)
-	0xc0,                       // END_COLLECTION (Physical)        
+	0xc0,                       // END_COLLECTION (Physical)
 	// Lights - REPORT_ID 5 
 	0x85, 0x05,                 // REPORT_ID 5
 	0x15, 0x00,                 // LOGICAL_MINIMUM (0)
@@ -48,27 +48,24 @@ const uint8_t hidReportDescriptor[] = {
 	0xc0                        // END_COLLECTION
 };
 
-Joystick_::Joystick_()
-{
-
-	// Register HID Report Description
+Joystick_::Joystick_() {
 	DynamicHIDSubDescriptor *node = new DynamicHIDSubDescriptor(hidReportDescriptor, sizeof(hidReportDescriptor), true);
 	DynamicHID().AppendDescriptor(node);
-	
+	report[0] = 0; // Buttons
+	report[1] = 0; // Buttons
+	report[2] = 0x80; // X
+	report[3] = 0x80; // Y
 }
 
-void Joystick_::setButton(uint8_t button, uint8_t value)
-{
-    int index = button / 8;
-    int bit = button % 8;
-	bitWrite(_buttonValues[index], bit, value);
+void Joystick_::setButton(uint8_t button, uint8_t value) {
+	int index = button / 8;
+	int bit = button % 8;
+	if (bitRead(report[index], bit) != value) reportChanged = true;
+	bitWrite(report[index], bit, value);
 }
 
-void Joystick_::sendState()
-{
-	uint8_t data[4];
-	data[0] = _buttonValues[0];
-	data[1] = _buttonValues[1];
-	data[2] = data[3] = 0x80;
-	DynamicHID().SendReport(JOYSTICK_REPORT_ID, data, 4);
+void Joystick_::sendState() {
+	if (!reportChanged) return;
+	DynamicHID().SendReport(JOYSTICK_REPORT_ID, report, sizeof(report));
+	reportChanged = false;
 }

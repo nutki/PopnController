@@ -3,13 +3,11 @@
 
 #include <stdint.h>
 
-class Joystick_
-{
+class Joystick_ {
 private:
-
     // Joystick State
-    uint8_t   _buttonValues[2];
-
+    uint8_t   report[4];
+    bool      reportChanged;
 public:
     Joystick_();
     void setButton(uint8_t button, uint8_t value);

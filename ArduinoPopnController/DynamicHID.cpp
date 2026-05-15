@@ -62,44 +62,44 @@ const char* const PROGMEM LEDString_07 = "Button 8";
 const char* const PROGMEM LEDString_08 = "Button 9";
 uint8_t STRING_ID_LED_Count = 9;
 #define STRING_ID_LED_Base 4
-byte led_data[10];
+const char* LEDString_indiv[] = {LEDString_00, LEDString_01, LEDString_02, LEDString_03, LEDString_04, LEDString_05, LEDString_06, LEDString_07, LEDString_08};
 
-const char* LEDString_indiv[] = {LEDString_00,LEDString_01,LEDString_02,LEDString_03,LEDString_04,LEDString_05,LEDString_06,LEDString_07,LEDString_08};
 static bool SendControl(uint8_t d)
 {
-  return USB_SendControl(0, &d, 1) == 1;
+	return USB_SendControl(0, &d, 1) == 1;
 }
+
 static bool USB_SendStringDescriptor(const char *string_P, uint8_t string_len, uint8_t flags) {
-        SendControl(2 + string_len * 2);
-        SendControl(3);
-        bool pgm = flags & TRANSFER_PGM;
-        for(uint8_t i = 0; i < string_len; i++) {
-                bool r = SendControl(pgm ? pgm_read_byte(&string_P[i]) : string_P[i]);
-                r &= SendControl(0); // high byte
-                if(!r) {
-                        return false;
-                }
-        }
-        return true;
+	SendControl(2 + string_len * 2);
+	SendControl(3);
+	bool pgm = flags & TRANSFER_PGM;
+	for(uint8_t i = 0; i < string_len; i++) {
+			bool r = SendControl(pgm ? pgm_read_byte(&string_P[i]) : string_P[i]);
+			r &= SendControl(0); // high byte
+			if(!r) {
+					return false;
+			}
+	}
+	return true;
 }
 
 int DynamicHID_::getDescriptor(USBSetup& setup)
 {
-      if(setup.wValueH == USB_STRING_DESCRIPTOR_TYPE) { 
-        if (setup.wValueL == IPRODUCT) {
-            return USB_SendStringDescriptor(String_Product, strlen(String_Product), 0);
-        }
-        else if (setup.wValueL == IMANUFACTURER) {
-            return USB_SendStringDescriptor(String_Manufacturer, strlen(String_Manufacturer), 0);
-        }
-        else if (setup.wValueL == ISERIAL) {
-            return USB_SendStringDescriptor(String_Serial, strlen(String_Serial), 0);
-        }
-        else if(setup.wValueL >= STRING_ID_LED_Base && setup.wValueL < (STRING_ID_LED_Base + STRING_ID_LED_Count)) {
-          return USB_SendStringDescriptor(LEDString_indiv[setup.wValueL - STRING_ID_LED_Base], strlen(LEDString_indiv[setup.wValueL - STRING_ID_LED_Base]), 0);
-        }                       
-      }
-  // Check if this is a HID Class Descriptor request
+	if(setup.wValueH == USB_STRING_DESCRIPTOR_TYPE) { 
+		if (setup.wValueL == IPRODUCT) {
+			return USB_SendStringDescriptor(String_Product, strlen(String_Product), 0);
+		}
+		else if (setup.wValueL == IMANUFACTURER) {
+			return USB_SendStringDescriptor(String_Manufacturer, strlen(String_Manufacturer), 0);
+		}
+		else if (setup.wValueL == ISERIAL) {
+			return USB_SendStringDescriptor(String_Serial, strlen(String_Serial), 0);
+		}
+		else if(setup.wValueL >= STRING_ID_LED_Base && setup.wValueL < (STRING_ID_LED_Base + STRING_ID_LED_Count)) {
+			return USB_SendStringDescriptor(LEDString_indiv[setup.wValueL - STRING_ID_LED_Base], strlen(LEDString_indiv[setup.wValueL - STRING_ID_LED_Base]), 0);
+		}
+	}
+	// Check if this is a HID Class Descriptor request
 	if (setup.bmRequestType != REQUEST_DEVICETOHOST_STANDARD_INTERFACE) { return 0; }
 	if (setup.wValueH != DYNAMIC_HID_REPORT_DESCRIPTOR_TYPE) { return 0; }
 
@@ -199,13 +199,12 @@ bool DynamicHID_::setup(USBSetup& setup)
 			// You can read multiple times through a loop.
 			// The first byte (may!) contain the reportID on a multreport.
 			//USB_RecvControl(data, length);
-      if(setup.wValueH == DYNAMIC_HID_REPORT_TYPE_OUTPUT && setup.wLength == 10){
-        USB_RecvControl(led_data, 10);
-        for (int i = 0; i < 9; i++) {
-			analogWrite(i+2, led_data[i+1]);
-        }
-        return true;
-      }
+			if(setup.wValueH == DYNAMIC_HID_REPORT_TYPE_OUTPUT && setup.wLength == 10){
+				byte led_data[10];
+		 		USB_RecvControl(led_data, 10);
+				for (int i = 0; i < 9; i++) analogWrite(i+2, led_data[i+1]);
+				return true;
+			}
 		}
 	}
 
